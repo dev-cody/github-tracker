@@ -42,13 +42,16 @@ class App extends Component {
 
   //Render the components to the DOM
   render() {
+    //Pulling out some of the
+    const {users, loading} = this.state;
+
     return (
       <div className="App">
         <Navbar />
         <div className="container">
           {/* Props being passed up from the Seach component */}
-          <Search searchUsers={ this.searchUsers } clearUsers={ this.clearUsers }/>
-          <Users loading={ this.state.loading } users={ this.state.users }/>
+          <Search searchUsers={ this.searchUsers } clearUsers={ this.clearUsers } showClear={ users.length > 0 ? true : false } />
+          <Users loading={ loading } users={ users }/>
         </div>
       </div>
     );
