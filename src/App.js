@@ -5,25 +5,27 @@ import './App.css';
 import Navbar from './components/layout/Navbar';
 import Users from './components/users/Users';
 import Search from './components/users/Search';
+import Alert from './components/layout/Alert';
 
 class App extends Component {
   //Setting the inital state
   state = {
     users: [],
-    loading: false
+    loading: false,
+    alert: null
   }
 
   //Pull a random 30 users when component mounts
-  async componentDidMount() {
-    //Setting the state to show the loading spinner
-    this.setState({ loading: true });
-    //Basic fetch to the first 30 random github users
-    const res = await axios.get(`https://api.github.com/users?
-    client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}
-    &client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
-    //Setting the state of users to res.data and then removing the spiiner
-    this.setState({ users: res.data, loading: false});
-  }
+  // async componentDidMount() {
+  //   //Setting the state to show the loading spinner
+  //   this.setState({ loading: true });
+  //   //Basic fetch to the first 30 random github users
+  //   const res = await axios.get(`https://api.github.com/users?
+  //   client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}
+  //   &client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
+  //   //Setting the state of users to res.data and then removing the spiiner
+  //   this.setState({ users: res.data, loading: false});
+  // }
 
   //search github users
   searchUsers = async (text) => {
@@ -40,6 +42,16 @@ class App extends Component {
   //Clear users from state 
   clearUsers = () => this.setState({ users: [], loading: false});
 
+  //Creating the alert, setAlert
+  setAlert = (msg, type) => {
+    //Setting the state for the alert message
+    this.setState({ alert: { msg, type }});
+    //Setting the time out to 5 seconds so that the alert will be removed
+    setTimeout(() => {
+      this.setState({ alert: null })
+    }, 3000)
+  };
+
   //Render the components to the DOM
   render() {
     //Pulling out some of the
@@ -49,8 +61,14 @@ class App extends Component {
       <div className="App">
         <Navbar />
         <div className="container">
+          <Alert alert={ this.state.alert }/>
           {/* Props being passed up from the Seach component */}
-          <Search searchUsers={ this.searchUsers } clearUsers={ this.clearUsers } showClear={ users.length > 0 ? true : false } />
+          <Search 
+            searchUsers={ this.searchUsers } 
+            clearUsers={ this.clearUsers } 
+            showClear={ users.length > 0 ? true : false } 
+            setAlert={ this.setAlert }
+          />
           <Users loading={ loading } users={ users }/>
         </div>
       </div>

@@ -11,7 +11,8 @@ class Search extends Component {
     static propTypes = {
         searchUsers: PropTypes.func.isRequired,
         clearUsers: PropTypes.func.isRequired,
-        showClear: PropTypes.bool.isRequired
+        showClear: PropTypes.bool.isRequired,
+        setAlert: PropTypes.func.isRequired
     }
 
     onChange = (e) => this.setState({ [e.target.name]: e.target.value })
@@ -19,10 +20,16 @@ class Search extends Component {
     onSubmit = (e) => {
         //Preventing the from from loading
         e.preventDefault();
+        //Checking to make sure that the user has input something to search
+        if(this.state.text === '') {
+            //If it's an empty string, we will display a light colored alert
+            this.props.setAlert('Please enter something', 'light')
+        } else {
         //Passing the text state to the main app component
         this.props.searchUsers(this.state.text);
         //Setting the text back to nothing
         this.setState({ text: ''});
+        }
     }
 
     render() {
