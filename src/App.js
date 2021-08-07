@@ -8,11 +8,13 @@ import Users from './components/users/Users';
 import Search from './components/users/Search';
 import Alert from './components/layout/Alert';
 import About from './components/pages/About';
+import User from './components/users/User';
 
 class App extends Component {
   //Setting the inital state
   state = {
     users: [],
+    user: {},
     loading: false,
     alert: null
   }
@@ -41,6 +43,19 @@ class App extends Component {
     this.setState({ users: res.data.items, loading: false});
   }
 
+  //Get single github user
+  //The user name arg is coming from the path='/users/:login' params that are passed in from user.js
+  getUser = async (username) => {
+        //Set the spinner to be loading again
+        this.setState({ loading: true });
+        //Fetch the data for a single user in the github users search
+        const res = await axios.get(`https://api.github.com/users/${username}?
+        client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}
+        &client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
+        //Setting the users to res.data.items and spiiner to false
+        this.setState({ user: res.data, loading: false});
+  };
+
   //Clear users from state 
   clearUsers = () => this.setState({ users: [], loading: false});
 
@@ -57,7 +72,7 @@ class App extends Component {
   //Render the components to the DOM
   render() {
     //Pulling out some of the
-    const {users, loading} = this.state;
+    const {users, user, loading} = this.state;
 
     return (
       <Router>
@@ -79,6 +94,10 @@ class App extends Component {
                 </Fragment>
               )} />
               <Route exact path='/about' component={About} />
+              {/* Passing data from this.getUser down to the user component and rounting to it with React Router*/}
+              <Route exact path='/user/:login' render={props => (
+                <User { ...props } getUser={this.getUser} user={ user } loading={ loading } />
+              )} />
             </Switch>
           </div>
         </div>
